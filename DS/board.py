@@ -55,11 +55,9 @@ class Board:
 
     def draw_winner(self, winner):
         if winner == 'black' or 'white':
-            print("draw colour if")
             text = font.render(f' {winner.upper()} WON THE GAME !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
         else:
-            print("draw tie if")
             text = font.render(f'ITS A  {winner.upper()} !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
 
