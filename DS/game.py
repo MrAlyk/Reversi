@@ -79,19 +79,16 @@ class Game(Board):
                 colTemp += x
                 if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
                     break
-
-            if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
-                continue
-
-            if self.board[rowTemp][colTemp].get_colour() == self.turn:
-
-                while True:
-                    rowTemp -= y
-                    colTemp -= x
-                    if colTemp == col and rowTemp == row:
-                        break
-
-                    self.piecesToFlip.append([rowTemp, colTemp])
+                else:
+                    if self.board[rowTemp][colTemp].get_colour() == self.turn:
+                        while True:
+                            rowTemp -= y
+                            colTemp -= x
+                            if colTemp == col and rowTemp == row:
+                                break
+                            self.piecesToFlip.append([rowTemp, colTemp])
+                if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
+                    break
 
     def search_for_any_valid_move(self):
         for y in range(8):
