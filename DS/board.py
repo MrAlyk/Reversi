@@ -54,7 +54,7 @@ class Board:
         self.win.blit(text, (10, 510))
 
     def draw_winner(self, winner):
-        if winner == 'black' or 'white':
+        if winner == 'black' or winner == 'white':
             text = font.render(f' {winner.upper()} WON THE GAME !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
         else:
