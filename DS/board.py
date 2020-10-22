@@ -58,7 +58,7 @@ class Board:
             text = font.render(f' {winner.upper()} WON THE GAME !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
         else:
-            text = font.render(f'ITS A  {winner.upper()} !!!', True, COL_WHITE, COL_BLACK)
+            text = font.render(f'ITS  A  {winner.upper()} !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
 
     def is_on_board(self, col, row):
