@@ -72,3 +72,9 @@ class Board:
             return True
         else:
             return False
+
+    def is_not_valid_tile(self, col, row):
+        if not self.is_on_board(col, row) or not self.tile_not_empty(col, row):
+            return True
+        else:
+            return False
