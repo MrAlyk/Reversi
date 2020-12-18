@@ -104,8 +104,8 @@ class Game:
         return colTemp, rowTemp
 
     def search_for_any_valid_move(self):
-        for y in range(8):
-            for x in range(8):
+        for y in range(ROWS):
+            for x in range(COLS):
                 if not self.gameBoard.tile_not_empty(x, y):
                     self.get_pieces_to_flip(x, y)
                 else:
