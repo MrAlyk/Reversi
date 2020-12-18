@@ -20,7 +20,7 @@ def main():
         clock.tick(FPS)
 
         if game.game_over():
-            game.draw_winner(game.who_won())
+            game.gameBoard.draw_winner(game.who_won())
         else:
             game.game_turn()
 

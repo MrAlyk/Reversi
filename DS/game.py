@@ -1,22 +1,22 @@
 from DS import Board, ROWS, COLS
 
 
-class Game(Board):
+class Game:
 
     def __init__(self, win):
-        super().__init__(win)
         self.turn = 'black'
         self.piecesToFlip = []
+        self.gameBoard = Board(win)
 
     def change_turn(self):
         if self.turn == 'black':
             self.turn = 'white'
         else:
             self.turn = 'black'
-        self.draw_info(self.turn)
+        self.gameBoard.draw_info(self.turn)
 
     def game_over(self):
-        if self.pieces < 1:
+        if self.gameBoard.pieces < 1:
             return True
         else:
             if self.turn == 'black' and not self.search_for_any_valid_move():
@@ -39,12 +39,7 @@ class Game(Board):
     def who_won(self):
         blackCount = 0
         whiteCount = 0
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.board[row][col].get_colour() == 'black' and not self.is_not_valid_tile(col, row):
-                    blackCount += 1
-                elif self.board[row][col].get_colour() == 'white' and not self.is_not_valid_tile(col, row):
-                    whiteCount += 1
+        blackCount, whiteCount = self.count_tiles(blackCount, whiteCount)
 
         if blackCount > whiteCount:
             return 'black'
@@ -53,16 +48,27 @@ class Game(Board):
         else:
             return 'tie'
 
+    def count_tiles(self, blackCount, whiteCount):
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.gameBoard.board[row][col].get_colour() == 'black' \
+                        and not self.gameBoard.is_not_valid_tile(col, row):
+                    blackCount += 1
+                elif self.gameBoard.board[row][col].get_colour() == 'white' \
+                        and not self.gameBoard.is_not_valid_tile(col, row):
+                    whiteCount += 1
+        return blackCount, whiteCount
+
     def is_valid_move(self, col, row):
         self.get_pieces_to_flip(col, row)
-        if len(self.piecesToFlip) > 0 and not self.tile_not_empty(col, row):
+        if len(self.piecesToFlip) > 0 and not self.gameBoard.tile_not_empty(col, row):
             return True
         else:
             return False
 
     def make_move(self, col, row):
         if self.is_valid_move(col, row):
-            self.update_board(col, row, self.turn, self.piecesToFlip)
+            self.gameBoard.update_board(col, row, self.turn, self.piecesToFlip)
             self.change_turn()
 
     def get_pieces_to_flip(self, col, row):
@@ -71,29 +77,36 @@ class Game(Board):
             rowTemp = row + y
             colTemp = col + x
 
-            if self.is_not_valid_tile(colTemp, rowTemp):
+            if self.gameBoard.is_not_valid_tile(colTemp, rowTemp):
                 continue
             try:
-                while self.board[rowTemp][colTemp].get_colour() != self.turn:
-                    rowTemp += y
-                    colTemp += x
-                    if self.is_not_valid_tile(colTemp, rowTemp):
-                        break
-                    else:
-                        if self.board[rowTemp][colTemp].get_colour() == self.turn:
-                            while True:
-                                rowTemp -= y
-                                colTemp -= x
-                                if colTemp == col and rowTemp == row:
-                                    break
-                                self.piecesToFlip.append([rowTemp, colTemp])
+                self.find_possible_path(col, colTemp, row, rowTemp, x, y)
             except AttributeError:
                 continue
+
+    def find_possible_path(self, col, colTemp, row, rowTemp, x, y):
+        while self.gameBoard.board[rowTemp][colTemp].get_colour() != self.turn:
+            rowTemp += y
+            colTemp += x
+            if self.gameBoard.is_not_valid_tile(colTemp, rowTemp):
+                break
+            else:
+                if self.gameBoard.board[rowTemp][colTemp].get_colour() == self.turn:
+                    colTemp, rowTemp = self.backtrack(col, colTemp, row, rowTemp, x, y)
+
+    def backtrack(self, col, colTemp, row, rowTemp, x, y):
+        while True:
+            rowTemp -= y
+            colTemp -= x
+            if colTemp == col and rowTemp == row:
+                break
+            self.piecesToFlip.append([rowTemp, colTemp])
+        return colTemp, rowTemp
 
     def search_for_any_valid_move(self):
         for y in range(8):
             for x in range(8):
-                if not self.tile_not_empty(x, y):
+                if not self.gameBoard.tile_not_empty(x, y):
                     self.get_pieces_to_flip(x, y)
                 else:
                     continue

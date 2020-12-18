@@ -31,16 +31,16 @@ class Board:
             self.board.append([])
             for col in range(COLS):
                 self.board[row].append(None)
-                if row == 3 and col == 3:
+                if row == ROWS/2-1 and col == COLS/2-1:
                     self.board[row][col] = (Piece('white', col, row, win))
                     self.pieces -= 1
-                if row == 3 and col == 4:
+                if row == ROWS/2-1 and col == COLS/2:
                     self.board[row][col] = (Piece('black', col, row, win))
                     self.pieces -= 1
-                if row == 4 and col == 3:
+                if row == ROWS/2 and col == COLS/2-1:
                     self.board[row][col] = (Piece('black', col, row, win))
                     self.pieces -= 1
-                if row == 4 and col == 4:
+                if row == ROWS/2 and col == COLS/2:
                     self.board[row][col] = (Piece('white', col, row, win))
                     self.pieces -= 1
         self.draw_info('black')
@@ -61,7 +61,8 @@ class Board:
             text = font.render(f'ITS  A  {winner.upper()} !!!', True, COL_WHITE, COL_BLACK)
             self.win.blit(text, (10, 510))
 
-    def is_on_board(self, col, row):
+    @staticmethod
+    def is_on_board(col, row):
         if COLS > col > -1 and ROWS > row > -1:
             return True
         else:
