@@ -7,12 +7,12 @@ class Board:
     def __init__(self, win):
         self.board = []
         self.win = win
-        self.pieces = 64
+        self.emptyTiles = 64
         self.draw(win)
 
     def update_board(self, col, row, colour, lst):
         self.board[row][col] = Piece(colour, col, row, self.win)
-        self.pieces -= 1
+        self.deduct_tile()
         for i in range(len(lst)):
             self.board[lst[i][0]][lst[i][1]].change_colour(colour)
 
@@ -21,20 +21,18 @@ class Board:
             self.board.append([])
             for col in range(COLS):
                 self.board[row].append(None)
-                if row == ROWS / 2 - 1 and col == COLS / 2 - 1:
-                    self.board[row][col] = (Piece('white', col, row, win))
-                    self.pieces -= 1
-                if row == ROWS / 2 - 1 and col == COLS / 2:
-                    self.board[row][col] = (Piece('black', col, row, win))
-                    self.pieces -= 1
-                if row == ROWS / 2 and col == COLS / 2 - 1:
-                    self.board[row][col] = (Piece('black', col, row, win))
-                    self.pieces -= 1
-                if row == ROWS / 2 and col == COLS / 2:
-                    self.board[row][col] = (Piece('white', col, row, win))
-                    self.pieces -= 1
-
+        self.put_starting_pieces(win)
         Draw.draw_info(win, 'black')
+
+    def put_starting_pieces(self, win):
+        self.put_piece(COLS // 2 - 1, ROWS // 2 - 1, 'white', win)
+        self.put_piece(COLS // 2, ROWS // 2 - 1, 'black', win)
+        self.put_piece(COLS // 2 - 1, ROWS // 2, 'black', win)
+        self.put_piece(COLS // 2, ROWS // 2, 'white', win)
+
+    def put_piece(self, col, row, colour, win):
+        self.board[row][col] = (Piece(colour, col, row, win))
+        self.deduct_tile()
 
     def draw(self, win):
         Draw.draw_tiles(win)
@@ -58,3 +56,6 @@ class Board:
             return True
         else:
             return False
+
+    def deduct_tile(self):
+        self.emptyTiles -= 1

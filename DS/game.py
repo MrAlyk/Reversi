@@ -17,7 +17,7 @@ class Game:
         Draw.draw_info(self.win, self.turn)
 
     def game_over(self):
-        if self.gameBoard.pieces < 1:
+        if self.gameBoard.emptyTiles < 1:
             return True
         else:
             return self.check_turns()
