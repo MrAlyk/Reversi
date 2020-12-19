@@ -1,4 +1,5 @@
-from .const import TILE_IMG, COL_BLACK, ROWS, COLS, TILE_SIZE, font, COL_WHITE
+from .const import ROWS, COLS
+from .draw import Draw
 from .piece import Piece
 
 
@@ -15,51 +16,29 @@ class Board:
         for i in range(len(lst)):
             self.board[lst[i][0]][lst[i][1]].change_colour(colour)
 
-    @staticmethod
-    def __draw_tiles(win):
-        win.fill(COL_BLACK)
-        x, y = 0, 0
-        for row in range(ROWS):
-            x = 0
-            for col in range(COLS):
-                win.blit(TILE_IMG, (x, y))
-                x = x + TILE_SIZE
-            y = y + TILE_SIZE
-
-    def __draw_starting_board(self, win):
+    def create_board(self, win):
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):
                 self.board[row].append(None)
-                if row == ROWS/2-1 and col == COLS/2-1:
+                if row == ROWS / 2 - 1 and col == COLS / 2 - 1:
                     self.board[row][col] = (Piece('white', col, row, win))
                     self.pieces -= 1
-                if row == ROWS/2-1 and col == COLS/2:
+                if row == ROWS / 2 - 1 and col == COLS / 2:
                     self.board[row][col] = (Piece('black', col, row, win))
                     self.pieces -= 1
-                if row == ROWS/2 and col == COLS/2-1:
+                if row == ROWS / 2 and col == COLS / 2 - 1:
                     self.board[row][col] = (Piece('black', col, row, win))
                     self.pieces -= 1
-                if row == ROWS/2 and col == COLS/2:
+                if row == ROWS / 2 and col == COLS / 2:
                     self.board[row][col] = (Piece('white', col, row, win))
                     self.pieces -= 1
-        self.draw_info('black')
+
+        Draw.draw_info(win, 'black')
 
     def draw(self, win):
-        self.__draw_tiles(win)
-        self.__draw_starting_board(win)
-
-    def draw_info(self, turn):
-        text = font.render(f'Turn: {turn.upper()}', True, COL_WHITE, COL_BLACK)
-        self.win.blit(text, (10, 510))
-
-    def draw_winner(self, winner):
-        if winner == 'black' or winner == 'white':
-            text = font.render(f' {winner.upper()} WON THE GAME !!!', True, COL_WHITE, COL_BLACK)
-            self.win.blit(text, (10, 510))
-        else:
-            text = font.render(f'ITS  A  {winner.upper()} !!!', True, COL_WHITE, COL_BLACK)
-            self.win.blit(text, (10, 510))
+        Draw.draw_tiles(win)
+        self.create_board(win)
 
     @staticmethod
     def is_on_board(col, row):

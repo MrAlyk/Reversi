@@ -1,4 +1,4 @@
-from DS import WIN, FPS, TILE_SIZE
+from DS import WIN, FPS, TILE_SIZE, Draw
 import pygame
 from DS.game import Game
 
@@ -20,7 +20,7 @@ def main():
         clock.tick(FPS)
 
         if game.game_over():
-            game.gameBoard.draw_winner(game.who_won())
+            Draw.draw_winner(WIN, game.who_won())
         else:
             game.game_turn()
 

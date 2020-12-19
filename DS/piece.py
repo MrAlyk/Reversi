@@ -1,3 +1,4 @@
+from .draw import Draw
 from .const import TILE_SIZE, WHITE_IMG, BLACK_IMG
 
 
@@ -9,7 +10,7 @@ class Piece:
         self.col = col
         self.row = row
         self.win = win
-        self.__draw_piece(win)
+        self.draw(win)
 
     def get_colour(self):
         return self.colour
@@ -20,14 +21,11 @@ class Piece:
 
     def change_colour(self, colour):
         self.colour = colour
-        self.__draw_piece(self.win)
+        self.draw(self.win)
 
-    def __draw_piece(self, win):
+    def draw(self, win):
         self.calc_pos()
-        if self.colour == "white":
-            win.blit(WHITE_IMG, (self.x_pos, self.y_pos))
-        else:
-            win.blit(BLACK_IMG, (self.x_pos, self.y_pos))
+        Draw.draw_piece(self.colour, win, self.x_pos, self.y_pos)
 
     def __repr__(self):
         return f'PIECE OBJ :row.{self.row};col.{self.col} ' + self.colour

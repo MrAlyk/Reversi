@@ -1,10 +1,11 @@
-from DS import Board, ROWS, COLS
+from DS import Board, ROWS, COLS, Draw
 
 
 class Game:
 
     def __init__(self, win):
         self.turn = 'black'
+        self.win = win
         self.piecesToFlip = []
         self.gameBoard = Board(win)
 
@@ -13,7 +14,7 @@ class Game:
             self.turn = 'white'
         else:
             self.turn = 'black'
-        self.gameBoard.draw_info(self.turn)
+        Draw.draw_info(self.win, self.turn)
 
     def game_over(self):
         if self.gameBoard.pieces < 1:
