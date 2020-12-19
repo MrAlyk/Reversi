@@ -22,7 +22,7 @@ def main():
         if game.game_over():
             Draw.draw_winner(WIN, game.who_won())
         else:
-            game.game_turn()
+            game.check_turn()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

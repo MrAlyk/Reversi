@@ -20,22 +20,21 @@ class Game:
         if self.gameBoard.pieces < 1:
             return True
         else:
-            if self.turn == 'black' and not self.search_for_any_valid_move():
-                self.change_turn()
-                if not self.search_for_any_valid_move():
-                    return True
-                else:
-                    self.change_turn()
-                    return False
-            elif self.turn == 'white' and not self.search_for_any_valid_move():
-                self.change_turn()
-                if not self.search_for_any_valid_move():
-                    return True
-                else:
-                    self.change_turn()
-                    return False
-            else:
-                return False
+            return self.check_turns()
+
+    def check_turns(self):
+        if not self.search_for_any_valid_move():
+            return self.check_opposite_turn()
+        else:
+            return False
+
+    def check_opposite_turn(self):
+        self.change_turn()
+        if not self.search_for_any_valid_move():
+            return True
+        else:
+            self.change_turn()
+            return False
 
     def who_won(self):
         blackCount = 0
@@ -81,11 +80,11 @@ class Game:
             if self.gameBoard.is_not_valid_tile(colTemp, rowTemp):
                 continue
             try:
-                self.find_possible_path(col, colTemp, row, rowTemp, x, y)
+                self.go_straight(col, colTemp, row, rowTemp, x, y)
             except AttributeError:
                 continue
 
-    def find_possible_path(self, col, colTemp, row, rowTemp, x, y):
+    def go_straight(self, col, colTemp, row, rowTemp, x, y):
         while self.gameBoard.board[rowTemp][colTemp].get_colour() != self.turn:
             rowTemp += y
             colTemp += x
@@ -115,6 +114,6 @@ class Game:
                     return True
         return False
 
-    def game_turn(self):
+    def check_turn(self):
         if not self.search_for_any_valid_move():
             self.change_turn()
