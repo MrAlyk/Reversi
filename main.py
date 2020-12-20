@@ -1,4 +1,4 @@
-from DS import WIN, FPS, TILE_SIZE, Draw
+from DS import WIN, FPS, TILE_SIZE
 import pygame
 from DS.game import Game
 
@@ -14,15 +14,10 @@ def get_click_position(pos):
 def main():
     run = True
     clock = pygame.time.Clock()
-    game = Game(WIN)
+    game = Game()
 
     while run:
         clock.tick(FPS)
-
-        if game.game_over():
-            Draw.draw_winner(WIN, game.who_won())
-        else:
-            game.check_turn()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

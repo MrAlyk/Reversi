@@ -1,20 +1,23 @@
-from DS import Board, ROWS, COLS, Draw
+from DS import Board, ROWS, COLS, Draw, WIN
 
 
 class Game:
 
-    def __init__(self, win):
+    def __init__(self):
         self.turn = 'black'
-        self.win = win
         self.piecesToFlip = []
-        self.gameBoard = Board(win)
+        self.gameBoard = Board()
 
     def change_turn(self):
         if self.turn == 'black':
             self.turn = 'white'
         else:
             self.turn = 'black'
-        Draw.draw_info(self.win, self.turn)
+        Draw.draw_info(self.turn)
+
+    def check_for_game_over(self):
+        if self.game_over():
+            Draw.draw_winner(self.who_won())
 
     def game_over(self):
         if self.gameBoard.emptyTiles < 1:
@@ -23,14 +26,14 @@ class Game:
             return self.check_turns()
 
     def check_turns(self):
-        if not self.search_for_any_valid_move():
-            return self.check_opposite_turn()
-        else:
+        if self.check_opposite_turn():
             return False
+        else:
+            return not self.search_for_any_valid_move()
 
     def check_opposite_turn(self):
         self.change_turn()
-        if not self.search_for_any_valid_move():
+        if self.search_for_any_valid_move():
             return True
         else:
             self.change_turn()
@@ -69,7 +72,7 @@ class Game:
     def make_move(self, col, row):
         if self.is_valid_move(col, row):
             self.gameBoard.update_board(col, row, self.turn, self.piecesToFlip)
-            self.change_turn()
+            self.check_for_game_over()
 
     def get_pieces_to_flip(self, col, row):
         self.piecesToFlip = []
@@ -113,7 +116,3 @@ class Game:
                 if len(self.piecesToFlip) > 0:
                     return True
         return False
-
-    def check_turn(self):
-        if not self.search_for_any_valid_move():
-            self.change_turn()

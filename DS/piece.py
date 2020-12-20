@@ -1,16 +1,15 @@
 from .draw import Draw
-from .const import TILE_SIZE, WHITE_IMG, BLACK_IMG
+from .const import TILE_SIZE
 
 
 class Piece:
-    def __init__(self, colour, col, row, win):
+    def __init__(self, colour, col, row):
         self.x_pos = 0
         self.y_pos = 0
         self.colour = colour
         self.col = col
         self.row = row
-        self.win = win
-        self.draw(win)
+        self.draw()
 
     def get_colour(self):
         return self.colour
@@ -21,11 +20,11 @@ class Piece:
 
     def change_colour(self, colour):
         self.colour = colour
-        self.draw(self.win)
+        self.draw()
 
-    def draw(self, win):
+    def draw(self):
         self.calc_pos()
-        Draw.draw_piece(self.colour, win, self.x_pos, self.y_pos)
+        Draw.draw_piece(self.colour, self.x_pos, self.y_pos)
 
     def __repr__(self):
         return f'PIECE OBJ :row.{self.row};col.{self.col} ' + self.colour

@@ -4,39 +4,38 @@ from .piece import Piece
 
 
 class Board:
-    def __init__(self, win):
+    def __init__(self):
         self.board = []
-        self.win = win
         self.emptyTiles = 64
-        self.draw(win)
+        self.draw()
 
     def update_board(self, col, row, colour, lst):
-        self.board[row][col] = Piece(colour, col, row, self.win)
+        self.board[row][col] = Piece(colour, col, row)
         self.deduct_tile()
         for i in range(len(lst)):
             self.board[lst[i][0]][lst[i][1]].change_colour(colour)
 
-    def create_board(self, win):
+    def create_board(self):
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):
                 self.board[row].append(None)
-        self.put_starting_pieces(win)
-        Draw.draw_info(win, 'black')
+        self.put_starting_pieces()
+        Draw.draw_info('black')
 
-    def put_starting_pieces(self, win):
-        self.put_piece(COLS // 2 - 1, ROWS // 2 - 1, 'white', win)
-        self.put_piece(COLS // 2, ROWS // 2 - 1, 'black', win)
-        self.put_piece(COLS // 2 - 1, ROWS // 2, 'black', win)
-        self.put_piece(COLS // 2, ROWS // 2, 'white', win)
+    def put_starting_pieces(self):
+        self.put_piece(COLS // 2 - 1, ROWS // 2 - 1, 'white')
+        self.put_piece(COLS // 2, ROWS // 2 - 1, 'black')
+        self.put_piece(COLS // 2 - 1, ROWS // 2, 'black')
+        self.put_piece(COLS // 2, ROWS // 2, 'white')
 
-    def put_piece(self, col, row, colour, win):
-        self.board[row][col] = (Piece(colour, col, row, win))
+    def put_piece(self, col, row, colour):
+        self.board[row][col] = (Piece(colour, col, row))
         self.deduct_tile()
 
-    def draw(self, win):
-        Draw.draw_tiles(win)
-        self.create_board(win)
+    def draw(self):
+        Draw.draw_tiles()
+        self.create_board()
 
     @staticmethod
     def is_on_board(col, row):
