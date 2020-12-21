@@ -1,4 +1,4 @@
-from DS.const import *
+from .const import *
 
 
 class Draw:

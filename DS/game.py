@@ -1,4 +1,6 @@
-from DS import Board, ROWS, COLS, Draw, WIN
+from .board import Board
+from .const import ROWS, COLS
+from .draw import Draw
 
 
 class Game:

@@ -1,6 +1,6 @@
-from DS import WIN, FPS, TILE_SIZE
-import pygame
+from DS.const import FPS, TILE_SIZE
 from DS.game import Game
+import pygame
 
 
 def get_click_position(pos):
