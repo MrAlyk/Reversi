@@ -1,49 +1,50 @@
-from DS import Board, ROWS, COLS
+from .board import Board
+from .const import ROWS, COLS
+from .draw import Draw
 
 
-class Game(Board):
+class Game:
 
-    def __init__(self, win):
-        super().__init__(win)
+    def __init__(self):
         self.turn = 'black'
         self.piecesToFlip = []
+        self.gameBoard = Board()
 
     def change_turn(self):
         if self.turn == 'black':
             self.turn = 'white'
         else:
             self.turn = 'black'
+        Draw.draw_info(self.turn)
+
+    def check_for_game_over(self):
+        if self.game_over():
+            Draw.draw_winner(self.who_won())
 
     def game_over(self):
-        if self.pieces < 1:
+        if self.gameBoard.emptyTiles < 1:
             return True
         else:
-            if self.turn == 'black' and not self.search_for_any_valid_move():
-                self.change_turn()
-                if not self.search_for_any_valid_move():
-                    return True
-                else:
-                    self.change_turn()
-                    return False
-            elif self.turn == 'white' and not self.search_for_any_valid_move():
-                self.change_turn()
-                if not self.search_for_any_valid_move():
-                    return True
-                else:
-                    self.change_turn()
-                    return False
-            else:
-                return False
+            return self.check_turns()
+
+    def check_turns(self):
+        if self.check_opposite_turn():
+            return False
+        else:
+            return not self.search_for_any_valid_move()
+
+    def check_opposite_turn(self):
+        self.change_turn()
+        if self.search_for_any_valid_move():
+            return True
+        else:
+            self.change_turn()
+            return False
 
     def who_won(self):
         blackCount = 0
         whiteCount = 0
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.board[row][col].get_colour() == 'black':
-                    blackCount += 1
-                elif self.board[row][col].get_colour() == 'white':
-                    whiteCount += 1
+        blackCount, whiteCount = self.count_tiles(blackCount, whiteCount)
 
         if blackCount > whiteCount:
             return 'black'
@@ -52,18 +53,28 @@ class Game(Board):
         else:
             return 'tie'
 
+    def count_tiles(self, blackCount, whiteCount):
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.gameBoard.board[row][col].get_colour() == 'black' \
+                        and not self.gameBoard.is_not_valid_tile(col, row):
+                    blackCount += 1
+                elif self.gameBoard.board[row][col].get_colour() == 'white' \
+                        and not self.gameBoard.is_not_valid_tile(col, row):
+                    whiteCount += 1
+        return blackCount, whiteCount
+
     def is_valid_move(self, col, row):
         self.get_pieces_to_flip(col, row)
-        if len(self.piecesToFlip) > 0 and not self.tile_not_empty(col, row):
+        if len(self.piecesToFlip) > 0 and not self.gameBoard.tile_not_empty(col, row):
             return True
         else:
             return False
 
     def make_move(self, col, row):
         if self.is_valid_move(col, row):
-            self.update_board(col, row, self.turn, self.piecesToFlip)
-            self.change_turn()
-            self.draw_info(self.turn)
+            self.gameBoard.update_board(col, row, self.turn, self.piecesToFlip)
+            self.check_for_game_over()
 
     def get_pieces_to_flip(self, col, row):
         self.piecesToFlip = []
@@ -71,39 +82,39 @@ class Game(Board):
             rowTemp = row + y
             colTemp = col + x
 
-            if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
+            if self.gameBoard.is_not_valid_tile(colTemp, rowTemp):
+                continue
+            try:
+                self.go_straight(col, colTemp, row, rowTemp, x, y)
+            except AttributeError:
                 continue
 
-            while self.board[rowTemp][colTemp].get_colour() != self.turn:
-                rowTemp += y
-                colTemp += x
-                if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
-                    break
+    def go_straight(self, col, colTemp, row, rowTemp, x, y):
+        while self.gameBoard.board[rowTemp][colTemp].get_colour() != self.turn:
+            rowTemp += y
+            colTemp += x
+            if self.gameBoard.is_not_valid_tile(colTemp, rowTemp):
+                break
+            else:
+                if self.gameBoard.board[rowTemp][colTemp].get_colour() == self.turn:
+                    colTemp, rowTemp = self.backtrack(col, colTemp, row, rowTemp, x, y)
 
-            if not self.is_on_board(colTemp, rowTemp) or not self.tile_not_empty(colTemp, rowTemp):
-                continue
-
-            if self.board[rowTemp][colTemp].get_colour() == self.turn:
-
-                while True:
-                    rowTemp -= y
-                    colTemp -= x
-                    if colTemp == col and rowTemp == row:
-                        break
-
-                    self.piecesToFlip.append([rowTemp, colTemp])
+    def backtrack(self, col, colTemp, row, rowTemp, x, y):
+        while True:
+            rowTemp -= y
+            colTemp -= x
+            if colTemp == col and rowTemp == row:
+                break
+            self.piecesToFlip.append([rowTemp, colTemp])
+        return colTemp, rowTemp
 
     def search_for_any_valid_move(self):
-        for y in range(8):
-            for x in range(8):
-                if not self.tile_not_empty(x, y):
+        for y in range(ROWS):
+            for x in range(COLS):
+                if not self.gameBoard.tile_not_empty(x, y):
                     self.get_pieces_to_flip(x, y)
                 else:
                     continue
                 if len(self.piecesToFlip) > 0:
                     return True
         return False
-
-    def game_turn(self):
-        if not self.search_for_any_valid_move():
-            self.change_turn()
